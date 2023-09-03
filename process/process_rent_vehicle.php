@@ -1,9 +1,13 @@
 <?php
-
+session_start();
 
 // Include your database connection here
 include("../connection.php");
-
+if (!isset($_SESSION['user_id'])) {
+    // If agency is not logged in, redirect to the login page
+    header("Location: ../agencySignin.php");
+    exit();
+}
 // Check if the form is submitted using POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get the data from the POST request
@@ -18,10 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
    
    
 
-    echo $userid;
-    echo $vehicleid;
-    echo $agencyid;
-    echo $rentDays;
+   
     // Calculate the start time (current timestamp)
     $startTime = time();
 

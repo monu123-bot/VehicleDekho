@@ -1,3 +1,8 @@
+<?php 
+@session_start();
+                   
+                
+                ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -59,10 +64,18 @@ include("navbar.php");
                 
                 
                 
-                if (isset($_SESSION['user_id'])){
-
-                    $userid = $_SESSION['user_id'];
+                if (isset($_SESSION['user_name'])){
+                    if ($_SESSION['role']==='user'){
+                        
+                         $userid = $_SESSION['user_id'];
                     echo  "<td>" . "<a  href='rent_vehicle.php?agencyid=$agencyid&vehicleid=$vehicleid&userid=$userid&agencyname=$agencyname&model=$model'   > Rent vehicle </a>" . "</td>";
+                        
+                    }
+                    else{
+                        echo "<td>" . '<button  disabled > <a href="#" > Not allowed </a> </button>' . "</td>";
+                    }
+                    
+                   
                 }
                 else{
                     echo "<td>" . '<button  disabled > <a href="userSignin.php" > Login </a> </button>' . "</td>";

@@ -1,13 +1,13 @@
+
 <nav class="navbar bg-body-tertiary">
   <div class="container-fluid">
     <a class="navbar-brand">VehicleDekho</a>
     <form class="d-flex" role="search">
       <?php 
       
-      if (session_status() == PHP_SESSION_NONE) {
-        // Start a new session if one is not already active
-        session_start();
-    }
+      
+        
+    
       if (isset($_SESSION['user_id']) || isset($_SESSION['agencyId'])  ) { 
      $username = $_SESSION['user_name']; ?>
        

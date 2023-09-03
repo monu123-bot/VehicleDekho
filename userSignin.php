@@ -17,7 +17,8 @@
 
         <input type="submit" value="Sign In">
     </form>
-    <p>Don't have an account? <a href="user_signup.php">Sign Up</a></p>
+    <p>Don't have an account? <a href="userSignup.php">Sign Up</a></p>
+    <p>Home <a href="home.php">Home</a></p>
 </body>
 </html>
 <style>/* Existing CSS styles */

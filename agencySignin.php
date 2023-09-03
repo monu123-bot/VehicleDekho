@@ -17,6 +17,8 @@
 
         <input type="submit" value="Sign In">
     </form>
+     <p>Don't have an account? <a href="agencySignup.php">Sign Up</a></p>
+    <p>Home <a href="home.php">Home</a></p>
 </body>
 </html>
 <style>

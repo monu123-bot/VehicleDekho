@@ -22,7 +22,11 @@ if ($result->num_rows == 1) {
     // Verify the provided password with the hashed password in the database
     if (password_verify($password, $row['password'])) {
         // Password is correct, agency is authenticated
+          if (session_status() == PHP_SESSION_NONE) {
+        // Start a new session if one is not already active
         session_start();
+    }
+        $_SESSION['role'] = 'agency';
         $_SESSION['agencyId'] = $row['agencyId']; // Store agency ID in session
         $_SESSION['user_name'] = $row['name'];
         header("Location: ../agency_dashboard.php"); // Redirect to agency dashboard

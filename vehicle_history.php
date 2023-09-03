@@ -1,3 +1,4 @@
+<?php session_start() ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,7 +15,7 @@
 
 
     <?php
-session_start();
+ 
 if (!isset($_SESSION['agencyId'])) {
     // If agency is not logged in, redirect to the login page
     header("Location: agencySignin.php");

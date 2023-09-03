@@ -1,6 +1,8 @@
 <?php
 // Start a session to access agency ID and other session data
-session_start();
+  
+        session_start();
+   
 
 include("connection.php");
 

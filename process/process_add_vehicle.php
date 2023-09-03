@@ -1,6 +1,8 @@
 <?php
 // Start a session to access agency ID
+  
 session_start();
+    
 if (!isset($_SESSION['agencyId'])) {
     // If agency is not logged in, redirect to the login page
     header("Location: ../agencySignin.php");
@@ -32,13 +34,15 @@ $vehicleId = time() . "_" . $agencyId;
 // SQL query to insert the new vehicle into the database
 $sql = "INSERT INTO vehicle (VehicleId, model, number, SittingCapacity, rentPerDay, agencyId)
         VALUES ('$vehicleId', '$model', '$number', $sittingCapacity, $rentPerDay, '$agencyId')";
+$sql1 = "INSERT INTO agency_vehicle VALUES ('$agencyId','$vehicleId')";
 
-if ($conn->query($sql) === TRUE) {
+if ($conn->query($sql) === TRUE && $conn->query($sql1) === TRUE ) {
     header("Location: ../agency_dashboard.php");
-    echo "New vehicle added successfully!";
+    
 } else {
+    // echo "Error: " . $sql . "<br>" . $conn->error;
     header("Location: ../error.php");
-    echo "Error: " . $sql . "<br>" . $conn->error;
+   
 }
 
 

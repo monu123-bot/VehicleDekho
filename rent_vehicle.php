@@ -1,3 +1,4 @@
+<?php session_start() ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,11 +18,21 @@
 
     <?php
     // Get parameters from GET request
-    $userid = $_GET['userid'];
+    if (isset($_GET['userid']) && isset($_GET['agencyid']) && isset($_GET['vehicleid']) && isset($_GET['agencyname']) && isset($_GET['model']) ){
+        
+        $userid = $_GET['userid'];
     $agencyid = $_GET['agencyid'];
     $vehicleid = $_GET['vehicleid'];
     $agencyname = $_GET['agencyname'];
     $model = $_GET['model'];
+        
+    }
+    else{
+        echo "you can not accesss this page...";
+        exit();
+    }
+    
+    
 
     
  

@@ -1,6 +1,12 @@
 <?php
-
+session_start();
 include("../connection.php");
+if (!isset($_SESSION['agencyId'])) {
+    // If agency is not logged in, redirect to the login page
+    header("Location: ../agencySignin.php");
+    exit();
+}
+
 
 // Check if the POST request is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

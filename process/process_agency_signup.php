@@ -1,6 +1,6 @@
 <?php
 
-
+session_start();
 
 // Create a database connection
 include("../connection.php");
@@ -22,10 +22,12 @@ $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hash the pas
 $timestamp = time(); // Get current timestamp
 $agencyId = "AG" . $timestamp . $uin; // Combine timestamp and UIN to generate agencyId
 
-$sql0 = "Select * from agencies where UIN=$uin";
+$sql0 = "Select * from agencies where UIN='$uin' ";
 $result0 = $conn->query($sql0);
+
 if($result0->num_rows === 1){
-    echo 'UIN already exists please try with different UIN <a href="agencySignup.php"> back  </a>  ';
+    echo 'UIN already exists please try with different UIN <a href="../agencySignup.php"> back  </a>  ';
+    exit();
 
    
 }
@@ -35,11 +37,11 @@ $sql = "INSERT INTO agencies (agencyId, name, UIN, state, city, pincode, country
 VALUES ('$agencyId', '$name', '$uin', '$state', '$city', '$pincode', '$country', '$type', '$password')";
 
 if ($conn->query($sql) === TRUE) {
-echo "Agency registered successfully!";
-header("Location: ../agencySignin.php");
+
+    header("Location: ../agencySignin.php");
 } else {
     header("Location: ../error.php");
-echo "Error: " . $sql . "<br>" . $conn->error;
+
 }
 }
 

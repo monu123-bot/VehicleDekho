@@ -1,7 +1,6 @@
 <?php
-session_start();
 
-// Include your database connection here
+session_start();
 include("../connection.php");
 if (!isset($_SESSION['user_id'])) {
     // If agency is not logged in, redirect to the login page
@@ -44,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
 
     // 2. Update the 'vehicle' table to set 'bookedTill' to 'endTime'
-    $updateSql = "UPDATE vehicle SET bookedTill = '$endTime' WHERE VehicleId = '$vehicleid'";
+    $updateSql = "UPDATE vehicle SET starttime='$starttimestamp', bookedTill = '$endTime' WHERE VehicleId = '$vehicleid'";
     $updateResult = mysqli_query($conn, $updateSql);
 
     //3. Update the vehicle_user table
@@ -61,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     } else {
         // Error handling if the database operations fail
-        header("Location: ../error.php");
+        // header("Location: ../error.php");
         echo "Error: " . mysqli_error($conn);
     }
     

@@ -24,7 +24,7 @@
         $currentTimestamp = time();
 
         // SQL query to retrieve upcoming available free vehicles
-        $sql = "SELECT *, (bookedTill-$currentTimestamp)/86400 as ftime FROM vehicle WHERE bookedTill > $currentTimestamp order by ftime asc";
+        $sql = "SELECT *, (bookedTill-$currentTimestamp)/86400 as ftime FROM vehicle WHERE starttime<$currentTimestamp and bookedTill > $currentTimestamp order by ftime asc";
 
         // Execute the query
         $result = $conn->query($sql);
@@ -37,7 +37,7 @@
                     <th>Vehicle Number</th>
                     <th>Seating Capacity</th>
                     <th>Rent per Day</th>
-                    <th>Will be free in</th>
+                    <th>Will be available in</th>
 
                 </tr>';
 
@@ -65,7 +65,7 @@
 
             echo '</table>';
         } else {
-            echo "No upcoming available free vehicles.";
+            echo "All vehicles are available 😍 just go to home page and book your favourite one 😉.  <a href='home.php'> Home </a>";
         }
 
         

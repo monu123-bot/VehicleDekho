@@ -27,7 +27,7 @@ include("navbar.php");
   
     // SQL query to retrieve available cars
     $ctime = time();
-    $sql = "SELECT * FROM vehicle,agencies where vehicle.agencyId=agencies.agencyId and vehicle.bookedTill<$ctime   " ;
+    $sql = "SELECT * FROM vehicle,agencies where vehicle.agencyId=agencies.agencyId and (vehicle.starttime > UNIX_TIMESTAMP() or vehicle.bookedTill<UNIX_TIMESTAMP())   " ;
 
     // Execute the query
     $resultVehicles = $conn->query($sql);

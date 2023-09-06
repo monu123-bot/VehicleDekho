@@ -52,11 +52,10 @@ include("navbar.php");
                 $startDate = date('Y-m-d',intval($row['starttime']));
                 $endDate = date('Y-m-d',intval($row['endtime']));
                 $bookingDate =  date('Y-m-d', intval($row['bookingTime'])) ;
-                
-                     
-
-                    echo "<tr>";
-                echo "<td>" . $row['userid'] . "</td>";
+                  echo "<tr>";
+                if($row['starttime']<$row['endtime']){
+                    
+                    echo "<td>" . $row['userid'] . "</td>";
                 echo "<td>" . $row['model'] . "</td>";
                 echo "<td>" . $row['number'] . "</td>";
                 echo "<td>" . $row['SittingCapacity'] . "</td>";
@@ -64,6 +63,18 @@ include("navbar.php");
                 echo "<td>" . $startDate . "</td>";
                 echo "<td>" . $endDate . "</td>";
                 echo "<td>" . $bookingDate . "</td>";
+                    
+                    
+                }
+                else{
+                    
+                    echo "No history available for this vehicle";
+                }
+                
+                     
+
+                  
+                
                 
 
 

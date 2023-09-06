@@ -28,10 +28,23 @@ $agencyData = $resultAgency->fetch_assoc();
 
 $currentTimestamp = time();
 // SQL query to retrieve vehicles posted by this agency
-$sqlBookedVehicles = "select *,(bookedTill-$currentTimestamp)/86400 as ftime from vehicle v, users u, user_vehicle uv where v.VehicleId = uv.vehicleid and u.userID = uv.userid and v.agencyId = '$agencyId' and v.bookedTill>$currentTimestamp order by ftime asc   "  ;
-$sqlAvalVehicles = "SELECT * FROM vehicle WHERE agencyId = '$agencyId' and vehicle.bookedTill<$currentTimestamp  ";
+$sqlBookedVehicles = "select *,(bookedTill-$currentTimestamp)/86400 as ftime from vehicle v, users u, user_vehicle uv where v.VehicleId = uv.vehicleid and u.userID = uv.userid and v.agencyId = '$agencyId' and v.bookedTill>$currentTimestamp and  v.starttime <$currentTimestamp  order by ftime asc   "  ;
+
+
+$sqlBookedForLater = "SELECT * FROM vehicle WHERE agencyId = '$agencyId' and (vehicle.starttime > UNIX_TIMESTAMP() )  ";
+
+$sqlAvailable = "SELECT * FROM vehicle WHERE agencyId = '$agencyId' and (vehicle.starttime > UNIX_TIMESTAMP() or vehicle.bookedTill<UNIX_TIMESTAMP() )  ";
+
+
+
+$resultsqlAvailable = $conn->query($sqlAvailable);
+
+
+
 $resultBookedVehicles = $conn->query($sqlBookedVehicles);
-$resultAvalVehicles = $conn->query($sqlAvalVehicles);
+
+
+$resultsqlBookedForLater = $conn->query($sqlBookedForLater);
 
 ?>
 
@@ -106,10 +119,12 @@ $resultAvalVehicles = $conn->query($sqlAvalVehicles);
 
 
 
-               
+       <button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#vid'>
+                  Add Vehicle
+                </button>         
      
 <div class="vehicle-list" >
-    
+       <h4>Booked vehicles</h4>
         <?php
         if ($resultBookedVehicles->num_rows > 0) {
             // Display the list of vehicles posted by the agency
@@ -120,7 +135,7 @@ $resultAvalVehicles = $conn->query($sqlAvalVehicles);
                 
             <?php
             echo "<table>";
-            echo "<tr><th>Vehicle ID</th><th>Model</th><th>Number</th><th>Sitting Capacity</th><th>Rent per Day</th><th>Will be available after</th><th>Status</th><th>Edit</th><th>Rantee</th><th>History</th></tr>";
+            echo "<tr><th>Vehicle ID</th><th>Model</th><th>Number</th><th>Sitting Capacity</th><th>Rent per Day</th><th>Will be available after</th><th>Status</th><th>Rantee</th><th>History</th></tr>";
 
             while ($row = $resultBookedVehicles->fetch_assoc()) {
                 $vid = $row['VehicleId'];
@@ -164,55 +179,7 @@ $resultAvalVehicles = $conn->query($sqlAvalVehicles);
                 else{
                     echo "<td>" . "Booked" . "</td>";
                 }
-                echo "<td>" . "
-                
-
                
-                <button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#$vid'>
-                  Edit
-                </button>
-                
-                
-                <div class='modal fade' id='$vid' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
-                  <div class='modal-dialog'>
-                    <div class='modal-content'>
-                      <div class='modal-header'>
-                        
-                        <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
-                      </div>
-                      <div class='modal-body'>
-                      
-                      <div class='agency-info'>
-    <form action='./process/process_edit_vehicle.php?vehicleid=$vid' method='POST'>
-        <label for='model'>Model:</label>
-        <input type='text' id='model'  value = '$model'  name='model' required><br><br>
-
-        <label for='number'>Number:</label>
-        <input type='text' id='number' value='$number' name='number' required><br><br>
-
-        <label for='sittingCapacity'>Sitting Capacity:</label>
-        <input type='number' id='sittingCapacity' value='$scp' name='sittingCapacity' required><br><br>
-
-        <label for='rentPerDay'>Rent per Day:</label>
-        <input type='number' id='rentPerDay' value='$rpd' name='rentPerDay' required><br><br>
-
-        <!-- Hidden input field to store the agency ID -->
-        <input type='hidden' name='agencyId' value='$agencyId'>
-
-        <input type='submit' value='Save Changes'>
-    </form>
-</div>
-
-
-                      </div>
-                      
-                    </div>
-                  </div>
-                </div>
-                
-
-
-                " . "</td>";
 
                 echo "<td>" . "
                 
@@ -263,13 +230,11 @@ $resultAvalVehicles = $conn->query($sqlAvalVehicles);
        </div>
 
        <div class="vehicle-list" >
-       <button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#vid'>
-                  Add Vehicle
-                </button>
+        <h4>Vehicles booked for later</h4>
     <?php
-    if ($resultAvalVehicles->num_rows > 0) {
+    if ($resultsqlBookedForLater->num_rows > 0) {
         // Display the list of vehicles posted by the agency
-        echo "<h2>Available vehicles</h2>";
+        echo "<h2>Booked for later</h2>";
 
         ?>
         
@@ -278,7 +243,7 @@ $resultAvalVehicles = $conn->query($sqlAvalVehicles);
         echo "<table>";
         echo "<tr><th>Vehicle ID</th><th>Model</th><th>Number</th><th>Sitting Capacity</th><th>Rent per Day</th><th>History</th></tr>";
 
-        while ($row = $resultAvalVehicles->fetch_assoc()) {
+        while ($row = $resultsqlBookedForLater->fetch_assoc()) {
             $vid = $row['VehicleId'];
             $model = $row['model'];
             $number = $row['number'];
@@ -295,7 +260,96 @@ $resultAvalVehicles = $conn->query($sqlAvalVehicles);
             echo "<td>" . $row['rentPerDay'] . "</td>";
             echo "<td>" . "  <a  href='vehicle_history.php?vehicleid=$vid'   > Check History </a>" . "</td>";
             
-           
+
+            echo "</tr>";
+        }
+
+        echo "</table>";
+    } else {
+        echo "No vehicle has been booked for later..";
+    }
+    ?>
+   </div>
+   
+   <div class="vehicle-list" >
+     <h4>Available vehicles</h4>
+    <?php
+    if ($resultsqlAvailable->num_rows > 0) {
+        // Display the list of vehicles posted by the agency
+        echo "<h2>Available vehicles</h2>";
+
+        ?>
+        
+            
+        <?php
+        echo "<table>";
+        echo "<tr><th>Vehicle ID</th><th>Model</th><th>Number</th><th>Sitting Capacity</th><th>Rent per Day</th><th>Edit</th><th>History</th></tr>";
+
+        while ($row = $resultsqlAvailable->fetch_assoc()) {
+            $vid = $row['VehicleId'];
+            $model = $row['model'];
+            $number = $row['number'];
+            $scp =  $row['SittingCapacity'];
+            $rpd = $row['rentPerDay'];
+            
+            
+            
+            echo "<tr>";
+            echo "<td>" . $row['VehicleId'] . "</td>";
+            echo "<td>" . $row['model'] . "</td>";
+            echo "<td>" . $row['number'] . "</td>";
+            echo "<td>" . $row['SittingCapacity'] . "</td>";
+            echo "<td>" . $row['rentPerDay'] . "</td>";
+             echo "<td>" . "
+                
+
+               
+                <button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#$vid'>
+                  Edit
+                </button>
+                
+                
+                <div class='modal fade' id='$vid' tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+                  <div class='modal-dialog'>
+                    <div class='modal-content'>
+                      <div class='modal-header'>
+                        
+                        <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+                      </div>
+                      <div class='modal-body'>
+                      
+                      <div class='agency-info'>
+    <form action='./process/process_edit_vehicle.php?vehicleid=$vid' method='POST'>
+        <label for='model'>Model:</label>
+        <input type='text' id='model'  value = '$model'  name='model' required><br><br>
+
+        <label for='number'>Number:</label>
+        <input type='text' id='number' value='$number' name='number' required><br><br>
+
+        <label for='sittingCapacity'>Sitting Capacity:</label>
+        <input type='number' id='sittingCapacity' value='$scp' name='sittingCapacity' required><br><br>
+
+        <label for='rentPerDay'>Rent per Day:</label>
+        <input type='number' id='rentPerDay' value='$rpd' name='rentPerDay' required><br><br>
+
+        <!-- Hidden input field to store the agency ID -->
+        <input type='hidden' name='agencyId' value='$agencyId'>
+
+        <input type='submit' value='Save Changes'>
+    </form>
+</div>
+
+
+                      </div>
+                      
+                    </div>
+                  </div>
+                </div>
+                
+
+
+                " . "</td>";
+            echo "<td>" . "  <a  href='vehicle_history.php?vehicleid=$vid'   > Check History </a>" . "</td>";
             
 
             echo "</tr>";
@@ -303,7 +357,7 @@ $resultAvalVehicles = $conn->query($sqlAvalVehicles);
 
         echo "</table>";
     } else {
-        echo "No Available vehicle";
+        echo "No available vehicle";
     }
     ?>
    </div>
@@ -332,6 +386,8 @@ body {
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align:center;
+    align-items:center;
 }
 
 h1, h2 {
@@ -442,6 +498,9 @@ form input[type="submit"]:hover {
     border-radius: 5px;
     margin-bottom: 20px;
     text-align: center;
+}
+button{
+    margin:10px;
 }
 
 </style>

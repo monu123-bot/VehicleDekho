@@ -41,6 +41,7 @@ if ($conn->query($sql) === TRUE) {
     header("Location: ../agencySignin.php");
 } else {
     header("Location: ../error.php");
+    // echo "Error: " . mysqli_error($conn);
 
 }
 }

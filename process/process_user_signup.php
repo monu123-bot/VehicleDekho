@@ -23,11 +23,11 @@ $sql = "INSERT INTO users ( userID, fName, lName, email, gender, phone, createdA
         VALUES ( '$phone',  '$fName', '$lName', '$email', '$gender', '$phone', '$createdAt','user', '$password')";
 
 if ($conn->query($sql) === TRUE) {
-    echo "User registered successfully!";
+    
     header("Location: ../userSignin.php");
 } else {
     header("Location: ../error.php");
-    echo "Error: " . $sql . "<br>" . $conn->error;
+    
 }
 }
 else{

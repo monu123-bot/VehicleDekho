@@ -1,4 +1,6 @@
-<?php session_start() ?>
+<?php session_start() ;
+ include("connection.php");
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -32,7 +34,15 @@
         exit();
     }
     
+    $sql = "SELECT starttime,endtime FROM booking_log where booking_log.vehicleid='$vehicleid' and booking_log.starttime > UNIX_TIMESTAMP()  " ;
+
+    // Execute the query
+    $resultVehicles = $conn->query($sql);
     
+    
+   
+    
+    $currenttime = time();
 
     
  
@@ -56,6 +66,38 @@
         <input type="text" class="inp" name="vehicleId" id = "vehicleid"  value='<?php echo $vehicleid ?>' required>
 
     </div>
+    
+    <?php 
+        
+        if ($resultVehicles->num_rows > 0) {
+             // Display the list of already booked dates
+           
+            
+
+            while ($row = $resultVehicles->fetch_assoc()) {
+                
+                 $startDate = date('Y-m-d',intval($row['starttime']));
+                 $endDate = date('Y-m-d',intval($row['endtime']));
+                 
+                 ?>
+                 
+                   This vehicle has been already booked by someone from  <?php echo  $startDate ?>   to  <?php echo $endDate ?>
+                   <br>
+                   
+                
+       <?php     }
+       
+       echo "Please selecet a period which will not conflict with the above booked slots";
+            
+            
+  
+        }
+  
+  
+  
+   ?>
+    
+    <br>
     <label for="startdate">Start Date:</label>
         <input type="date" class="inp" name="startDate" id = "startdate"   required>
 
